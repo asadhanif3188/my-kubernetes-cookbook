@@ -86,6 +86,13 @@ In this section some container interfaces are discussed.
 
 <img src="./screenshots/CNI.png" width="80%">
 
+#### Calico
+- Calico is popular open-source CNI plugin for K8s ecosystem. 
+- Calico is positioned for environments where factors like **network performance**, **flexibility** and **power** are essential.  
+- Calico can be easily deployed as a DaemonSet on each node. 
+- Each node in a cluster would have *three* Calico components installed, i.e. **Felix**, **BIRD**, and **confd** for managing network tasks. 
+ 
+
 ### Container Storage Interface
 Specificatrion for storage plugins to dynamically provision and manage storage resources for containers running in Kubernetes. 
 
