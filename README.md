@@ -1,7 +1,12 @@
 # My Kubernetes Cookbook
 This cookbook is maintained to keep track of my k8s concepts learning. 
 
-
+```
+**Outline**
+1. Kubernetes Architecture
+2. Kubernetes Objects
+3. 
+```
 
 ## What is Kubernetes?
 Kubernetes is a portable, extensible, open source platform for managing containerized workloads and services, that facilitates both declarative configuration and automation. It has a large, rapidly growing ecosystem.
