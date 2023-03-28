@@ -76,8 +76,15 @@ In this section some container interfaces are discussed.
   - Docker
   - Mirantis 
 
-### Container Network Interface
-Specificatrion for container networking plugins to provide network capabiliteis to containers running in Kubernetes. 
+### Container Network Interface (CNI)
+- Specificatrion for container networking plugins to provide network capabiliteis to containers running in Kubernetes. 
+- Container Network Interface (CNI) plugins for cluster networking. 
+- It is reponsible for connecting Pods to the network and exposing them to other Pods and Services. 
+- CNI consists of a set of specifications and tools that define how network should work in K8s. 
+- CNI plugins can be used to implement different networking solutions, such as Overlay networks or Host networking. 
+- Some popular CNI plugins include Calico, Flannel, and WeaveNet. 
+
+<img src="./screenshots/CNI.png" width="80%">
 
 ### Container Storage Interface
 Specificatrion for storage plugins to dynamically provision and manage storage resources for containers running in Kubernetes. 
