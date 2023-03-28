@@ -48,10 +48,27 @@ Following are the well known objects of k8s:
 - ReplicaSet 
 - Deployment 
 - Service 
+- StatefulSet
+- DaemonSet
 - Namespace 
 - Ingress 
 - ConfigMap
 - Secret
-- PersistantVolume 
-- PersistantVolumeClaim 
+- PersistantVolume (PV)
+- PersistantVolumeClaim (PVC) 
 - StorageClass
+
+
+## Container Interfaces 
+In this section some container interfaces are discussed. 
+
+### Container Runtime Interfaces
+Specificatrion for container runtime to communicate with Kubernetes API Server and manage containers. 
+
+
+### Container Network Interfaces
+Specificatrion for container networking plugins to provide network capabiliteis to containers running in Kubernetes. 
+
+### Container Storage Interfaces
+Specificatrion for storage plugins to dynamically provision and manage storage resources for containers running in Kubernetes. 
+
