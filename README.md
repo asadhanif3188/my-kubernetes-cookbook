@@ -2,7 +2,8 @@
 This cookbook is maintained to keep track of my k8s concepts learning. 
 
 ```
-**Outline**
+Outline
+-------
 1. Kubernetes Architecture
 2. Kubernetes Objects
 3. 
