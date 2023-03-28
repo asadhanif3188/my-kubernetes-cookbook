@@ -28,3 +28,24 @@ Worker node runs following components:
 - Kubelet 
 - Kube-proxy 
 - Container Runtime 
+
+## Kubernetes Objects 
+Kubernetes objects are persistent entities in the Kubernetes system. Kubernetes uses these entities to represent the state of your cluster. 
+
+Specifically, they can describe:
+- What containerized applications are running (and on which nodes).
+- The resources available to those applications.
+- The policies around how those applications behave, such as restart policies, upgrades, and fault-tolerance.
+
+Following are the well known objects of k8s:
+- Pod
+- ReplicaSet 
+- Deployment 
+- Service 
+- Namespace 
+- Ingress 
+- ConfigMap
+- Secret
+- PersistantVolume 
+- PersistantVolumeClaim 
+- StorageClass
