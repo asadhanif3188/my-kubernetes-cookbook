@@ -91,8 +91,14 @@ In this section some container interfaces are discussed.
 - Calico is positioned for environments where factors like **network performance**, **flexibility** and **power** are essential.  
 - Calico can be easily deployed as a DaemonSet on each node. 
 - Each node in a cluster would have *three* Calico components installed, i.e. **Felix**, **BIRD**, and **confd** for managing network tasks. 
- 
 
-### Container Storage Interface
-Specificatrion for storage plugins to dynamically provision and manage storage resources for containers running in Kubernetes. 
+### Container Storage Interface (CSI)
+- Specificatrion for storage plugins to dynamically provision and manage storage resources for containers running in Kubernetes. 
+- CSI is a plugin-based system for integrating storage providers with K8s.
+- It provides a standardized way for storage providers to interact with K8s. 
+- CSI consists of a set of specifications and tools that define how storage should work in K8s.
+- CSI plugins can be used to implement different storage solutions, such as Block storage or File storage.
+- Some popular CSI plugins include AWS EBS, Azure Disk, and NFS. 
+
+<img src="./screenshots/CSI.png" width="80%">
 
