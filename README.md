@@ -1,13 +1,15 @@
 # My Kubernetes Cookbook
 This cookbook is maintained to keep track of my k8s concepts learning. 
 
-```
-Outline
 -------
-1. Kubernetes Architecture
-2. Kubernetes Objects
-3. 
-```
+**Outline**
+- [What is Kubernetes?](#what-is-kubernetes)
+- [Kubernetes Architecture](#kubernetes-architecture)
+- [Kubernetes Objects](#kubernetes-objects)
+- [Container Interfaces](#container-interfaces)
+- 
+
+-------
 
 ## What is Kubernetes?
 Kubernetes is a portable, extensible, open source platform for managing containerized workloads and services, that facilitates both declarative configuration and automation. It has a large, rapidly growing ecosystem.
@@ -59,7 +61,8 @@ Following are the well known objects of k8s:
 - StorageClass
 
 
-## Container Interfaces 
+
+## Container Interfaces
 In this section some container interfaces are discussed. 
 
 ### Container Runtime Interface (CRI)
