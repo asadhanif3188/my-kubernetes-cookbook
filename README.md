@@ -60,6 +60,27 @@ Following are the well known objects of k8s:
 - PersistantVolumeClaim (PVC) 
 - StorageClass
 
+### Pod
+Following are the important points about Pod:
+- Pods are the smallest deployable units of computing that we can create and manage in Kubernetes.
+- A Pod is a group of one or more containers, with shared storage and network resources, and a specification for how to run the containers. 
+- A Pod's contents are always co-located and co-scheduled, and run in a shared context. 
+- Pods are designed to support multiple cooperating processes (as containers) that form a cohesive unit of service. 
+- The containers in a Pod are automatically co-located and co-scheduled on the same physical or virtual machine in the cluster. 
+- The containers can share resources and dependencies, communicate with one another, and coordinate when and how they are terminated.
+
+There are two type of Pods:
+1. Pod (simple)
+2. Static Pod 
+
+#### Simple Pods
+- Normally Pods are controlled through API Server.
+
+#### Static Pods 
+- Static Pods are managed directly by the kubelet daemon on a specific node, without the API server observing them. 
+- The kubelet directly supervises each static Pod. 
+- Static Pods are always bound to one Kubelet on a specific node. 
+- The main use for static Pods is to run a self-hosted control plane: in other words, using the kubelet to supervise the individual control plane components.
 
 
 ## Container Interfaces
