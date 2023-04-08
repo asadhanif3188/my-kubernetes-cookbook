@@ -7,7 +7,8 @@ This cookbook is maintained to keep track of my k8s concepts learning.
 - [Kubernetes Architecture](#kubernetes-architecture)
 - [Kubernetes Objects](#kubernetes-objects)
 - [Container Interfaces](#container-interfaces)
-- 
+- Ingress
+- Persistent Volumes and Persistent Volume Claims
 
 -------
 
@@ -140,4 +141,32 @@ In this section some container interfaces are discussed.
 
 [Image Source](https://www.youtube.com/live/s-dH7Ktz1Zc)
 
+## Volumes
+In Kubernetes, a volume is a directory that is accessible to containers in a Pod. Volumes are used to store data that needs to persist beyond the lifetime of a container or to share data between containers. They are created by the kubelet on the node where the Pod is running, and can be backed by various storage types, such as local disk, network storage, or cloud storage.
+
+Volumes can be used in several ways in Kubernetes, including:
+- To store application data that needs to persist beyond the lifetime of a container, such as a database or configuration files.
+- To share data between containers in a Pod, for example, when multiple containers need to access the same files.
+- To provide a way to inject configuration data into a container at runtime, without requiring the container to be rebuilt.
+
+Kubernetes supports several types of volumes, including:
+- **emptyDir:** A volume that is created when a Pod is created and exists as long as the Pod exists. Data in this volume is lost if the Pod is deleted or recreated.
+- **hostPath:** A volume that mounts a file or directory from the host node's filesystem into the Pod. This can be used to access host-level resources such as logs or configuration files.
+- **persistentVolumeClaim:** A volume that is backed by a persistent volume, which is a piece of network-attached storage provisioned by the cluster's administrator. This type of volume is used to store data that needs to persist beyond the lifetime of a Pod, such as a database.
+- **configMap:** A volume that exposes a configuration file or set of key-value pairs as a volume in a Pod. This can be used to provide configuration data to a container at runtime.
+
+Volumes are a key component of Kubernetes, and are used extensively in building scalable and resilient applications.
+
+
+
+Persistent Volumes and Persistent Volume Claims
+
+### Storage Class 
+- A kubernetes object that defines the class of storage.
+- Determines the properties of the Persistent Volume.
+- Allows dynamic provisioning of storage resources.
+- Allows administrators to define multiple storge classes. 
+- Enablles applications to request the desired storage class.
+- Simplifiles storage managment in a cluster environment.
+- Some of the storage classes are: AWS EBS, Azure Disk, Google Cloud Persistent Disk, NFS, ClusterFS, Ceph RBD, OpenEBS, Local storage. 
 
