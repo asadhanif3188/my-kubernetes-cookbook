@@ -260,7 +260,22 @@ Defined in Persistent Volume and Persistent Volume Claim configuration file
 
 **It's important to choose the appropriate mode to ensure proper functionality of the application.**
 
+#### Reclaim Plicy 
+Reclaim policy determines what happens to the PV when it is released or deleted from a K8s cluster.
 
+There are three reclaim policies that can be set:
+1. **Retain**:
+    - The PV is not deleted when it's released or deleted from the cluster
+    - It remains available for manual reclamation
+    - Useful for preserving data for further analysis or debugging.
+2. **Recycle**:
+    - The PV is deleted, and its contents are wiped clean when it's released or deleted from the cluster
+    - The volume is made available for a new claim.
+    - Useful for non-critical data or when the data needs to be wiped clean before reuse.
+3. **Delete**:
+    - The PV is deleted from the storage provider when it's released or deleted from the cluster.
+    - Useful when the data stored in the PV is no longer needed
+    - The storage resource can be reclaimed by the provider.
 
 ### Storage Class 
 In Kubernetes, a StorageClass is an object that defines the class of storage that will be used by the PersistentVolumeClaim (PVC) object to dynamically provision the PersistentVolume (PV) resources. In other words, a StorageClass provides a way for administrators to define different classes of storage with different performance characteristics, and for users to request the type of storage they need.
