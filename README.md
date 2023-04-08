@@ -246,6 +246,21 @@ Defined in Persistent Volume configuration file
 
 **It is important to choose the appropriate volume mode for your application because it affects the way the storage is accessed and used.**
 
+#### Access Modes
+Access modes determine how a volume can be mounted by pods
+There are three types of access modes:
+1. **ReadWriteOnce (RWO)**:
+    - Allows the volume to be mounted as read-write by a single node in the cluster.
+2. **ReadOnlyMany (ROX)**:
+    - Allows the volume to be mounted as read-only by multiple nodes in the cluster.
+3. **ReadWriteMany (RWX)**:
+    - Allows the volume to be mounted as read-write by multiple nodes in the cluster simultaneously.
+
+Defined in Persistent Volume and Persistent Volume Claim configuration file
+
+**It's important to choose the appropriate mode to ensure proper functionality of the application.**
+
+
 
 ### Storage Class 
 In Kubernetes, a StorageClass is an object that defines the class of storage that will be used by the PersistentVolumeClaim (PVC) object to dynamically provision the PersistentVolume (PV) resources. In other words, a StorageClass provides a way for administrators to define different classes of storage with different performance characteristics, and for users to request the type of storage they need.
