@@ -8,7 +8,7 @@ This cookbook is maintained to keep track of my k8s concepts learning.
 - [Kubernetes Objects](#kubernetes-objects)
 - [Container Interfaces](#container-interfaces)
 - Ingress
-- Persistent Volumes and Persistent Volume Claims
+- [Volumes](#volumes)
 
 -------
 
