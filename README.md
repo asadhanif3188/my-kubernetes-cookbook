@@ -206,7 +206,45 @@ Following are some Persistent Volume types.
 | Cinder | Cinder is a block storage system used by OpenStack for managing and providing persistent storage to VMs. |
 | GlusterFS | A distributed file system that can scale out to multiple nodes. Provides scalable and fault-tolerant storage and can be used for big data and high-performance computing workloads. |
 
+#### Persistent Volume - Example for NFS
 
+```
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv0003
+spec:
+  capacity:
+    storage: 5Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: slow
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:
+    path: /tmp
+    server: 172.17.0.2
+```
+
+#### Volume Modes
+Volume Modes specify how a volume can be accessed by containers in a pod.
+
+There are two volume modes available in Persistent Volumes:
+1. **Filesystem Mode**:
+    - Used to mount the volume as a directory to the container
+    - The volume is mounted as a directory and the data is stored as files.
+    - Used for applications that require file storage.
+2. **Block Mode**:
+    - Used to mount the volume as a block device to the container.
+    - The volume is mounted as a block device and the data is stored as blocks.
+    - Used for applications that require raw storage.
+
+Defined in Persistent Volume configuration file
+
+**It is important to choose the appropriate volume mode for your application because it affects the way the storage is accessed and used.**
 
 
 ### Storage Class 
@@ -231,7 +269,7 @@ Some key points include:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: slow-nfs-storage
+  name: slow
 provisioner: external-nfs
 reclaimPolicy: Recycle
 allowVolumeExpansion: true
