@@ -158,15 +158,88 @@ Kubernetes supports several types of volumes, including:
 Volumes are a key component of Kubernetes, and are used extensively in building scalable and resilient applications.
 
 
+### Persistent Volume Claims (PVCs)
 
-Persistent Volumes and Persistent Volume Claims
+
+### Persistent Volumes (PVs)
+In Kubernetes, a Persistent Volume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using a StorageClass. It is a way to abstract the details of the underlying storage system, providing a uniform interface for applications to request storage resources.
+
+Persistent Volumes can be used by applications running in pods to store data persistently across pod restarts and rescheduling. When an application requests storage resources, it can be bound to a Persistent Volume Claim (PVC) which requests storage of a particular size and access mode. If a suitable Persistent Volume is available, the PVC is bound to it, and the application can start using it. If no suitable Persistent Volume is available, Kubernetes can dynamically provision one using a StorageClass.
+
+Some key points include:
+- Persistent Volumes (PVs) in K8s provide a way to store data separately from Pods.
+- It is a piece of storage in the cluster that has been
+provisioned by an administrator or dynamically
+provisioned using a storage class.
+- PVs have a lifecycle independent of pods and are not tied
+to any specific pod.
+- Can be statically provisioned or dynamically provisioned.
+- Can be accessed by one or many pods simultaneously
+depending on the access mode specified.
+- PVs are available in different types, such as local,
+network-attached, and cloud-provider-specific.
+- PVs can be bound to Persistent Volume Claims (PVCs) to
+provide storage to pods.
+
+#### Importance of PVs and PVCs in K8s
+- PVs and PVCs provide a way to abstract storage from underlying physical or cloud-based storage
+infrastructure.
+- They help to decouple storage from pod or container creation, which means that storage can be
+managed independently from the applications.
+- With PVs and PVCs, storage can be dynamically provisioned or allocated on demand.
+- They help to ensure data availability and persistence across pod or container failures, node failures, and
+cluster upgrades or migrations.
+- PVs and PVCs provide a way to manage storage resources efficiently, including monitoring, utilization,
+and optimization.
+- They enable multi-tenancy and secure isolation of storage resources, providing more granular control
+over storage access and usage.
+- Facilitates data persistence in stateful applications.
+
+#### Persistent Volume Types 
+Following are some Persistent Volume types. 
+
+| Type | Description    |
+|------|----------------|
+| HostPath | PV is mapped to a file or directory on the host node. Can be used for testing or situations where data persistence is not required. |
+| NFS | Network File System (NFS) is used to store data on network-attached storage devices. Multiple pods can access the same volume. |
+| iSCSI | iSCSI is a protocol used for block-level data storage, often used in storage area networks (SANS). Provides high-performance storage and can be used in production environments. |
+| Cinder | Cinder is a block storage system used by OpenStack for managing and providing persistent storage to VMs. |
+| GlusterFS | A distributed file system that can scale out to multiple nodes. Provides scalable and fault-tolerant storage and can be used for big data and high-performance computing workloads. |
+
+
+
 
 ### Storage Class 
+In Kubernetes, a StorageClass is an object that defines the class of storage that will be used by the PersistentVolumeClaim (PVC) object to dynamically provision the PersistentVolume (PV) resources. In other words, a StorageClass provides a way for administrators to define different classes of storage with different performance characteristics, and for users to request the type of storage they need.
+
+A StorageClass can specify parameters such as the type of storage (e.g., block or file), the performance characteristics (e.g., fast or slow), the availability and durability requirements, and so on. When a user creates a PVC, they can request a specific StorageClass by name, and Kubernetes will dynamically provision a PV that matches the class requirements if one is available.
+
+Using StorageClasses allows administrators to manage storage resources more efficiently, by offering a way to automate the provisioning of PVs based on the requirements of the PVCs, and to offer different classes of storage to users with different needs.
+
+Some key points include:
 - A kubernetes object that defines the class of storage.
 - Determines the properties of the Persistent Volume.
 - Allows dynamic provisioning of storage resources.
 - Allows administrators to define multiple storge classes. 
 - Enablles applications to request the desired storage class.
 - Simplifiles storage managment in a cluster environment.
-- Some of the storage classes are: AWS EBS, Azure Disk, Google Cloud Persistent Disk, NFS, ClusterFS, Ceph RBD, OpenEBS, Local storage. 
+- Some of the storage classes are: AWS EBS, Azure Disk, Google Cloud Persistent Disk, NFS, GlusterFS, Ceph RBD, OpenEBS, Local storage. 
 
+#### Storage Class - Example
+
+```
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: slow-nfs-storage
+provisioner: external-nfs
+reclaimPolicy: Recycle
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
+mountOptions:
+  - hard
+  - nfsvers=4.1
+parameters:
+  nfsServer: "172.17.0.2"
+  nfsPath: "/tmp"
+```
