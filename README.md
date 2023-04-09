@@ -435,12 +435,6 @@ Few keypoints are:
 - Enhance security and reduce the risk of unauthorized access or attacks. 
 - Particularly useful in multi-tenant environments. 
  
-RBAC authorization uses the `rbac.authorization.k8s.io` API group to drive authorization decisions, allowing us to dynamically configure policies through the Kubernetes API.
-
-To enable RBAC, start the API server with the `--authorization-mode` flag set to a comma-separated list that includes `RBAC;` for example:
-
-`kube-apiserver --authorization-mode=Example,RBAC --other-options --more-options`
-
 ### API Objects 
 The RBAC API declares four kinds of Kubernetes objects: 
 1. **Roles:** A set of rules that define the permissions of a specific role within a namespace. 
@@ -477,3 +471,21 @@ A RoleBinding may reference any Role in the same namespace. Alternatively, a Rol
 - Service accounts are used to manage permissions for applications running in a Pod. 
 - Service accounts have a unique identity and are created automatically by K8s. 
 - RBAC can be used  with external identity providers like Lightweight Directory Access Protocol (LDAP) and OpenID Connect. 
+
+### Service Account
+- The service account is a Kubernetes resource created automatically by Kubernetes
+- Used to authenticate pods running in a cluster
+- Each service account has a unique token
+- The service account token is mounted inside the pod
+- Grants permissions to Kubernetes API using RBAC
+- Can limit pod access to specific resources
+
+![k8s-rbac-objects](./screenshots/k8s-rbac-objects.png)
+
+### Enabling the RBAC Authorization 
+
+RBAC authorization uses the `rbac.authorization.k8s.io` API group to drive authorization decisions, allowing us to dynamically configure policies through the Kubernetes API.
+
+To enable RBAC, start the API server with the `--authorization-mode` flag set to a comma-separated list that includes `RBAC;` for example:
+
+`kube-apiserver --authorization-mode=Example,RBAC --other-options --more-options`
