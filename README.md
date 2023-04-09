@@ -894,14 +894,159 @@ rules:
 ```
 
 ### Task 11
-?
+Following practice example creates a service account, a role, and a role binding in a new namespace. The role allows read-only access to pods in the namespace, and the role binding binds the role to the service account. Finally, the service account is used to get a list of pods in the namespace.
+
 #### Answer:
+
+1. Create a new namespace:
+
+```
+kubectl create namespace rbac-test
+```
+
+2. Create a service account:
+
+```
+kubectl create sa test-user -n rbac-test
+```
+
+3. Create a role that allows read-only access to pods in the namespace:
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pod-reader
+  namespace: rbac-test
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+```
+
+4. Bind the role to the service account:
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: rbac-test
+subjects:
+- kind: ServiceAccount
+  name: test-user
+  namespace: rbac-test
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+
+5. Use the service account to get a list of pods in the namespace:
+
+```
+kubectl run --rm -it --image=busybox --serviceaccount=test-user --namespace=rbac-test shell -- sh
+/ # wget -q -O - http://localhost:8001/api/v1/namespaces/rbac-test/pods?watch=false
+```
 
 ### Task 12
+You have a Kubernetes cluster that hosts multiple applications and you want to apply Role-Based Access Control (RBAC) to limit access to resources based on user roles.
+
+#### Answer:
+
+1. Define Roles and RoleBindings: Roles define a set of rules that grant access to resources in the cluster, and RoleBindings link users or groups to those roles. You can define roles and rolebindings in a YAML file like the following:
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: pod-reader
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: default
+subjects:
+- kind: User
+  name: alice
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+
+In this example, a role named `pod-reader` is defined that grants read access to pods in the `default` namespace. We then create a rolebinding that links the `pod-reader` role to the alice user.
+
+2. Apply Roles and RoleBindings: Once you have defined roles and rolebindings, you can apply them to your cluster using the kubectl apply command:
+
+```
+kubectl apply -f roles.yaml
+```
+
+3. Test Access: To test the access control, you can use the `kubectl auth can-i` command. For example, to check if the `alice` user has read access to pods, you can run:
+
+`kubectl auth can-i get pods --as alice`
+
+This command will return `yes` if the user has the necessary rolebinding.
+
+### Task 13
+You are the administrator of a Kubernetes cluster that runs a mission-critical application. You want to ensure that only authorized users are able to deploy new pods and services to the cluster. You have been asked to implement Role-Based Access Control (RBAC) to achieve this.
+
+Your task is to:
+1. Create a new Role named "pod-deployer" that grants permissions to create and delete pods in the "default" namespace.
+2. Create a new RoleBinding named "pod-deployer-binding" that binds the "pod-deployer" Role to the "john" user.
+3. Verify that the "john" user is able to create and delete pods in the "default" namespace, but not in other namespaces.
+#### Answer:
+Follwing are the solution steps:
+
+1. Creating a new Role named **pod-deployer**.
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: pod-deployer
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["get", "list", "create", "delete"]
+```
+
+2. Creating a new RoleBinding named **pod-deployer-binding**.
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: pod-deployer-binding
+  namespace: default
+subjects:
+- kind: User
+  name: john 
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role 
+  name: pod-deployer
+  apiGroup: rbac.authorization.k8s.io
+```
+
+With this configuration, the user `John` will be able to `create` and `delete` Pods in the `default` namespace, but will not have permissions to perform any other actions on resources in that namespace.
+
+### Task 14
 ?
 #### Answer:
 
-### Task 13
+
+### Task 15
 ?
 #### Answer:
+
 --------
