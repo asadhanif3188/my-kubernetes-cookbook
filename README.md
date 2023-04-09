@@ -9,6 +9,8 @@ This cookbook is maintained to keep track of my k8s concepts learning.
 - [Container Interfaces](#container-interfaces)
 - Ingress
 - [Volumes](#volumes)
+- [Role-based access control (RBAC)](#role-based-access-control-rbac)
+- [RBAC - Lab Tasks](#rbac-lab-tasks)
 
 -------
 
