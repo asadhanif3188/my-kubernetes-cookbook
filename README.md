@@ -467,4 +467,13 @@ A role binding grants the permissions defined in a role to a user or set of user
 
 A RoleBinding may reference any Role in the same namespace. Alternatively, a RoleBinding can reference a ClusterRole and bind that ClusterRole to the namespace of the RoleBinding. If we want to bind a ClusterRole to all the namespaces in our cluster, we use a ClusterRoleBinding.
 
-
+### How RBAC Works?
+- Kubernetes API Server receives requests from clients.
+- The API server uses the RBAC authorization mode to check the request against policies defined in K8s objects. 
+- Policies are defined in roles, role bindings, cluster roles, and cluster role bindings. 
+- RBAC is enforced at the API server level and can be extended to other K8s components. 
+- The cluster admin creates roles and role bindings to grant permissions. 
+- A user can have multiple roles across multiple namespaces.
+- Service accounts are used to manage permissions for applications running in a Pod. 
+- Service accounts have a unique identity and are created automatically by K8s. 
+- RBAC can be used  with external identity providers like Lightweight Directory Access Protocol (LDAP) and OpenID Connect. 
