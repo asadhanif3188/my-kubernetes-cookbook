@@ -355,3 +355,116 @@ parameters:
   nfsServer: "172.17.0.2"
   nfsPath: "/tmp"
 ```
+
+### NFS as Persistent Volume
+
+#### Using NFS as Persistent Volume - Steps 
+- Install NFS server and create a NFS share
+- CSI driver installation for NFS
+- Create a Storage Class YAML file 
+- Create a Persistent Volume Claim YAML file
+
+**Install NFS Package on NFS Server**
+
+- Run the following command on the server that needs to be created as NFS server
+  - sudo apt-get install nfs-kernel-server
+- Create a directory to be used for sharing
+  - `sudo mkdir -p <path>`
+  - `sudo chown nobody:nogroup <path>`
+  - `sudo chmod 0777 <path>`
+- Edit the `/etc/exports` file, and make sure the nodes can access the NFS
+  - `<path> <CIDR>(rw,sync,no_subtree_check)`
+  - `/sharing/nfs 10.0.0.0/28(rw,sync,no_subtree_check)`
+- Restart the NFS Server
+  - `sudo systemctl restart nfs-kernel-server`
+
+**CSI driver installation for NFS**
+
+- Enable helm3 addon
+  - `microk8s enable helm3`
+- Deploy NFS provisioner using the official helm chart
+  - `microk8s helm3 repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts`
+  - `microk8s helm3 repo update`
+- Install the helm chart under the kube-system namespace
+  - `microk8s helm3 install csi-driver-nfs csi-driver-nfs/csi-driver-nfs --namespace kube-system --set kubeletDir=/var/snap/microk8s/common/var/lib/kubelet`
+- After deploying the Helm chart, wait for the CSI controller and node pods to come up
+  - `microk8s kubectl wait pod --selector app.kubernetes.io/name=csi-driver-nfs --for condition=ready --namespace kube-system`
+- List the available CSI drivers in your Kubernetes
+  - `microk8s kubectl get csidrivers`
+
+**Create a Storage Class YAML file** 
+
+```
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-csi
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: 10.0.0.42
+  share: /srv/nfs
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+mountOptions:
+  - hard
+  - nfsvers=4.1
+```
+
+**Create a New Persistent Volume Claim (PVC)**
+
+```
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  storageClassName: nfs-csi
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 5Gi
+```
+
+## Role-based access control (RBAC)
+Role-based access control (RBAC) is a method of regulating/controlling access to computer or network resources based on the roles of individual users within the organization.
+
+Few keypoints are: 
+- It allows us to define granular permissions for users or group of users. 
+- Limit the access of users to specific resources or actions within the cluster. 
+- Ensure that only authorized user or processes can access or midify certain resources in a Kubernetes cluster. 
+- Enhance security and reduce the risk of unauthorized access or attacks. 
+- Particularly useful in multi-tenant environments. 
+ 
+RBAC authorization uses the `rbac.authorization.k8s.io` API group to drive authorization decisions, allowing us to dynamically configure policies through the Kubernetes API.
+
+To enable RBAC, start the API server with the `--authorization-mode` flag set to a comma-separated list that includes `RBAC;` for example:
+
+`kube-apiserver --authorization-mode=Example,RBAC --other-options --more-options`
+
+### API Objects 
+The RBAC API declares four kinds of Kubernetes objects: 
+1. **Roles:** A set of rules that define the permissions of a specific role within a namespace. 
+2. **ClusterRoles:** A set of rules that define the permissions of a role across the entire cluster. 
+3. **RoleBindings:** A mapping of a role to a set of users or groups within a namespace. 
+4. **ClusterRoleBindings:** A mapping of a cluster role to a set of users or groups across the entire cluster. 
+
+#### Role and ClusterRole
+An RBAC **_Role_** or **_ClusterRole_** contains rules that represent a set of permissions. 
+
+A Role always sets permissions within a particular namespace; when we create a Role, we have to specify the namespace it belongs in. 
+
+ClusterRole, by contrast, is a non-namespaced resource. The resources have different names (Role and ClusterRole) because a Kubernetes object always has to be either namespaced or not namespaced; it can't be both.
+
+ClusterRoles have several uses. You can use a ClusterRole to:
+- define permissions on namespaced resources and be granted access within individual namespace(s)
+- define permissions on namespaced resources and be granted access across all namespaces
+- define permissions on cluster-scoped resources
+
+**Note:** If you want to define a role within a namespace, use a Role; if you want to define a role cluster-wide, use a ClusterRole.
+
+#### RoleBinding and ClusterRoleBinding
+A role binding grants the permissions defined in a role to a user or set of users. It holds a list of subjects (users, groups, or service accounts), and a reference to the role being granted. A RoleBinding grants permissions within a specific namespace whereas a ClusterRoleBinding grants that access cluster-wide.
+
+A RoleBinding may reference any Role in the same namespace. Alternatively, a RoleBinding can reference a ClusterRole and bind that ClusterRole to the namespace of the RoleBinding. If we want to bind a ClusterRole to all the namespaces in our cluster, we use a ClusterRoleBinding.
+
+
