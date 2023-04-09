@@ -489,3 +489,419 @@ RBAC authorization uses the `rbac.authorization.k8s.io` API group to drive autho
 To enable RBAC, start the API server with the `--authorization-mode` flag set to a comma-separated list that includes `RBAC;` for example:
 
 `kube-apiserver --authorization-mode=Example,RBAC --other-options --more-options`
+
+### Grant Permissions - Examples
+
+#### Role example
+Following is the example of Role in the "default" namespace that can be used to grant read access to pods:
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: pod-reader
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+```
+
+#### ClusterRole example
+A ClusterRole can be used to grant the same permissions as a Role. Because ClusterRoles are cluster-scoped, we can also use them to grant access to:
+- cluster-scoped resources (like nodes)
+- non-resource endpoints (like `/healthz`)
+- namespaced resources (like Pods), across all namespaces
+
+For example: we can use a ClusterRole to allow a particular user to run `kubectl get pods --all-namespaces`
+
+Here is an example of a ClusterRole that can be used to grant read access to secrets in any particular namespace, or across all namespaces:
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  # "namespace" omitted since ClusterRoles are not namespaced
+  name: secret-reader
+rules:
+- apiGroups: [""]
+  #
+  # at the HTTP level, the name of the resource for accessing Secret
+  # objects is "secrets"
+  resources: ["secrets"]
+  verbs: ["get", "watch", "list"]
+```
+
+#### RoleBinding examples
+Here is an example of a RoleBinding that grants the "pod-reader" Role to the user "jane" within the "default" namespace. This allows "jane" to read pods in the "default" namespace.
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+# This role binding allows "jane" to read pods in the "default" namespace.
+# You need to already have a Role named "pod-reader" in that namespace.
+kind: RoleBinding
+metadata:
+  name: read-pods
+  namespace: default
+subjects:
+# You can specify more than one "subject"
+- kind: User
+  name: jane # "name" is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  # "roleRef" specifies the binding to a Role / ClusterRole
+  kind: Role #this must be Role or ClusterRole
+  name: pod-reader # this must match the name of the Role or ClusterRole you wish to bind to
+  apiGroup: rbac.authorization.k8s.io
+```
+
+A RoleBinding can also reference a ClusterRole to grant the permissions defined in that ClusterRole to resources inside the RoleBinding's namespace. This kind of reference lets you define a set of common roles across your cluster, then reuse them within multiple namespaces.
+
+For instance, even though the following RoleBinding refers to a ClusterRole, "dave" (the subject, case sensitive) will only be able to read Secrets in the "development" namespace, because the RoleBinding's namespace (in its metadata) is "development".
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+# This role binding allows "dave" to read secrets in the "development" namespace.
+# You need to already have a ClusterRole named "secret-reader".
+kind: RoleBinding
+metadata:
+  name: read-secrets
+  #
+  # The namespace of the RoleBinding determines where the permissions are granted.
+  # This only grants permissions within the "development" namespace.
+  namespace: development
+subjects:
+- kind: User
+  name: dave # Name is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+
+#### ClusterRoleBinding example
+To grant permissions across a whole cluster, you can use a ClusterRoleBinding. The following ClusterRoleBinding allows any user in the group "manager" to read secrets in any namespace.
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+# This cluster role binding allows anyone in the "manager" group to read secrets in any namespace.
+kind: ClusterRoleBinding
+metadata:
+  name: read-secrets-global
+subjects:
+- kind: Group
+  name: manager # Name is case sensitive
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+
+After you create a binding, you cannot change the Role or ClusterRole that it refers to. If you try to change a binding's roleRef, you get a validation error. If you do want to change the roleRef for a binding, you need to remove the binding object and create a replacement.
+
+There are two reasons for this restriction:
+1. Making `roleRef` immutable allows granting someone `update` permission on an existing binding object, so that they can manage the list of subjects, without being able to change the role that is granted to those subjects.
+2. A binding to a different role is a fundamentally different binding. Requiring a binding to be deleted/recreated in order to change the `roleRef` ensures the full list of subjects in the binding is intended to be granted the new role (as opposed to enabling or accidentally modifying only the roleRef without verifying all of the existing subjects should be given the new role's permissions).
+
+
+![role-and-binding](./screenshots/role-and-binding.png)
+
+### API Groups 
+
+| API Group | Description |
+|--------|-----------------|
+| core | basic Kubernetes objects like Pods, Services, and Replication Controllers. |
+| rbac.authorization.k8s.io | RBAC related resources like Roles, RoleBindings, Cluster Roles, and Cluster RoleBindings. |
+| apps | higher-level application-centric resources like Deployments, ReplicaSets, and StatefulSets. |
+| batch | related to batch processing like CronJobs and Jobs. |
+| extensions | legacy extensions like Ingress, DaemonSet, and Replica Set. |
+| networking.k8s.io | network resources like Ingress, NetworkPolicy, and Service. |
+| storage.k8s.io | storage-related resources like Storage Class, PersistentVolume, and PersistentVolumeClaim. |
+
+### Resources
+There can be **Resource** Access Management for Resources like:
+- Pods
+- Services
+- Endpoints
+- Nodes
+- Namespaces
+- Events
+- ConfigMaps
+- Events
+- Secrets
+
+There can be Resource Access Management for **Sub-Resources** like:
+- Pods/exec
+- Deployment/scale
+- Ingress/status
+- Service/proxy
+- ConfigMap/rollback
+- Job/Completion
+- Secret/data
+
+**Note:** Resources are defined according to the API groups, Every resource cannot be used in every API group.
+
+### Verbs
+
+| Verb | Description |
+|-----|--------------|
+| get | Get one or more resources |
+| apply | Create and update a resource by applying a declarative configuration file. | 
+| list | List all resources of a kind | 
+| watch | Watch a resource for changes | 
+| create | Create a new resource | 
+| update | Update an existing resource | 
+| patch | Apply changes to a specific resource | 
+| delete | Delete a resource | 
+| deletecollection | Delete all resources of a kind | 
+
+![subjects-operations-rescources](./screenshots/subjects-operations-rescources.png)
+
+### Aggregated Roles 
+- An Aggregated Cluster Role is a role that allows access to resources across multiple API groups.
+- It is created by aggregating one or more Cluster Roles from different API groups.
+- Aggregated Roles can simplify RBAC management by allowing you to create a single Role that spans multiple API groups.
+- They are defined in the aggregation Rule field of a Cluster Role.
+- Aggregated Roles are useful for implementing custom controllers or operators that need access to resources across different API groups.
+
+--------
+## RBAC - Lab Tasks 
+
+### Task 01
+Inspect the environment and identify the autorization modes configured on the cluster. Check the `kube-apiserver` settings.  
+
+#### Answer:
+**Method 01:**
+
+Run following command and look for `--authorization-mode`.
+
+`cat /etc/kubernetes/manifests/kube-apiserver.yaml` 
+
+You'll see an option 
+
+`--authorization-mode=Node,RBAC`
+
+**Method 02:**
+
+Run following command and look for `--authorization-mode`.
+
+`ps -aux | grep authorization-mode` 
+
+You'll see an option 
+
+`--authorization-mode=Node,RBAC`
+
+**Method 03:**
+
+Run following command and look for `--authorization-mode`.
+
+`kubectl describe pod kube-apiserver-controlplane -n kube-system`
+
+You'll see an option 
+
+`--authorization-mode=Node,RBAC`
+
+### Task 02
+How many roles exist in the default namespace?
+#### Answer:
+Use the following command to list the available `roles` in the `default` namespace.
+
+`kubectl get roles`
+
+### Task 03
+How many roles exist in all namespaces together?
+#### Answer:
+
+`kubectl get roles -A --no-headers | wc -l`
+
+### Task 04
+What are the resources the `kube-proxy` role in the `kube-system` namespace is given access to?
+
+#### Answer:
+
+`kubectl describe role kube-proxy -n kube-system`
+
+```
+Name:         kube-proxy
+Labels:       <none>
+Annotations:  <none>
+PolicyRule:
+  Resources   Non-Resource URLs  Resource Names  Verbs
+  ---------   -----------------  --------------  -----
+  configmaps  []                 [kube-proxy]    [get]
+```
+
+It is **configmaps**.
+
+### Task 05
+What actions can the `kube-proxy` role perform on `configmaps`?
+#### Answer:
+Run the command and check under the `Verbs` column.
+
+`kubectl describe role -n kube-system kube-proxy` 
+
+```
+Name:         kube-proxy
+Labels:       <none>
+Annotations:  <none>
+PolicyRule:
+  Resources   Non-Resource URLs  Resource Names  Verbs
+  ---------   -----------------  --------------  -----
+  configmaps  []                 [kube-proxy]    [get]
+```
+
+It is **get**.
+
+### Task 06
+Which account is the `kube-proxy` role assigned to?
+#### Answer:
+Run the command: 
+
+`kubectl describe rolebinding kube-proxy -n kube-system`
+
+```
+Name:         kube-proxy
+Labels:       <none>
+Annotations:  <none>
+Role:
+  Kind:  Role
+  Name:  kube-proxy
+Subjects:
+  Kind   Name        Namespace
+  ----   ----        ---------
+  Group  system:bootstrappers:kubeadm:default-node-token  
+```
+
+It is `Group  system:bootstrappers:kubeadm:default-node-token`.
+
+### Task 07
+A user `dev-user` is created. User's details have been added to the `kubeconfig` file. Inspect the permissions granted to the user. Check if the user can list pods in the `default` namespace.
+
+Use the `--as dev-user` option with `kubectl` to run commands as the dev-user.
+#### Answer:
+Run the command: 
+
+`kubectl get pods --as dev-user`
+
+```
+Error from server (Forbidden): pods is forbidden: User "dev-user" cannot list resource "pods" in API group "" in the namespace "default"
+```
+
+### Task 08
+Create the necessary roles and role bindings required for the dev-user to create, list and delete pods in the default namespace.
+
+Use the given spec:
+- Role: developer
+- Role Resources: pods
+- Role Actions: list
+- Role Actions: create
+- Role Actions: delete
+- RoleBinding: dev-user-binding
+- RoleBinding: Bound to dev-user
+
+#### Answer:
+To create a Role:- `kubectl create role developer --namespace=default --verb=list,create,delete --resource=pods`
+
+To create a RoleBinding:- `kubectl create rolebinding dev-user-binding --namespace=default --role=developer --user=dev-user`
+
+**OR**
+
+Solution manifest file to create a role and rolebinding in the default namespace:
+
+```
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: default
+  name: developer
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["list", "create","delete"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: dev-user-binding
+subjects:
+- kind: User
+  name: dev-user
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: developer
+  apiGroup: rbac.authorization.k8s.io
+```
+
+### Task 09
+A set of new roles and role-bindings are created in the `blue` namespace for the `dev-user`. However, the `dev-user` is unable to get details of the `dark-blue-app` pod in the `blue` namespace. Investigate and fix the issue.
+
+We have created the required roles and rolebindings, but something seems to be wrong.
+#### Answer:
+Run the following command and correct the `resourceNames` field. You don't have to delete the role.
+
+`kubectl edit role developer -n blue`
+
+### Task 10
+Add a new rule in the existing role `developer` to grant the `dev-user` permissions to create deployments in the `blue` namespace.
+
+Remember to add api group "apps".
+
+#### Answer:
+Edit the `developer` role in the `blue` namespace to add a new rule under the `rules` section.
+
+`kubectl edit role developer -n blue`
+
+Append the below rule to the end of the file:
+
+```
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+```
+
+So it looks like this:
+
+```
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: developer
+  namespace: blue
+rules:
+- apiGroups:
+  - apps
+  resourceNames:
+  - dark-blue-app
+  resources:
+  - pods
+  verbs:
+  - get
+  - watch
+  - create
+  - delete
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+```
+
+### Task 11
+?
+#### Answer:
+
+### Task 12
+?
+#### Answer:
+
+### Task 13
+?
+#### Answer:
+--------
