@@ -1148,3 +1148,23 @@ Members of the FreeBSD community have contributed a Helm package build to the Fr
 
 `pkg install helm`
 
+### Initialize a Helm Chart Repository
+Once you have Helm ready, you can add a chart repository. Check [Artifact Hub](https://artifacthub.io/packages/search?kind=0) for available Helm chart repositories.
+
+`helm repo add bitnami https://charts.bitnami.com/bitnami`
+
+Once this is installed, you will be able to list the charts you can install:
+
+`helm search repo bitnami`
+
+Output: 
+
+```
+NAME                             	CHART VERSION	APP VERSION  	DESCRIPTION
+bitnami/bitnami-common           	0.0.9        	0.0.9        	DEPRECATED Chart with custom templates used in ...
+bitnami/airflow                  	8.0.2        	2.0.0        	Apache Airflow is a platform to programmaticall...
+bitnami/apache                   	8.2.3        	2.4.46       	Chart for Apache HTTP Server
+bitnami/aspnet-core              	1.2.3        	3.1.9        	ASP.NET Core is an open-source framework create...
+# ... and many more
+```
+
