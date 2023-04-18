@@ -1073,17 +1073,78 @@ For Helm, there are three important concepts:
 ### Components
 Helm is an executable which is implemented into two distinct parts:
 1. The **Helm Client** is a command-line client for end users. The client is responsible for the following:
-  - Local chart development
-  - Managing repositories
-  - Managing releases
-  - Interfacing with the Helm library
-  - Sending charts to be installed
-  - Requesting upgrading or uninstalling of existing releases
+    - Local chart development
+    - Managing repositories
+    - Managing releases
+    - Interfacing with the Helm library
+    - Sending charts to be installed
+    - Requesting upgrading or uninstalling of existing releases
 
 2. The **Helm Library** provides the logic for executing all Helm operations. It interfaces with the Kubernetes API server and provides the following capability:
-  - Combining a chart and configuration to build a release
-  - Installing charts into Kubernetes, and providing the subsequent release object
-  - Upgrading and uninstalling charts by interacting with Kubernetes
-  - The standalone Helm library encapsulates the Helm logic so that it can be leveraged by different clients.
+    - Combining a chart and configuration to build a release
+    - Installing charts into Kubernetes, and providing the subsequent release object
+    - Upgrading and uninstalling charts by interacting with Kubernetes
 
+The standalone Helm library encapsulates the Helm logic so that it can be leveraged by different clients.
+
+### Installing Helm
+There are multiple ways to install the Helm. 
+
+#### From the Binary Releases
+Every release of Helm provides binary releases for a variety of OSes. These binary versions can be manually downloaded and installed.
+1. Download your [desired version](https://github.com/helm/helm/releases)
+2. Unpack it (`tar -zxvf helm-v3.0.0-linux-amd64.tar.gz`)
+3. Find the helm binary in the unpacked directory, and move it to its desired destination (`mv linux-amd64/helm /usr/local/bin/helm`)
+
+#### From Script
+Helm now has an installer script that will automatically grab the latest version of Helm and install it locally.
+
+You can fetch that script, and then execute it locally. It's well documented so that you can read through it and understand what it is doing before you run it.
+
+```
+$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+$ chmod 700 get_helm.sh
+$ ./get_helm.sh
+```
+
+#### From Homebrew (macOS)
+Members of the Helm community have contributed a Helm formula build to Homebrew. This formula is generally up to date.
+
+``brew install helm``
+
+#### From Chocolatey (Windows)
+Members of the Helm community have contributed a Helm package build to Chocolatey. This package is generally up to date.
+
+`choco install kubernetes-helm`
+
+#### From Scoop (Windows)
+Members of the Helm community have contributed a Helm package build to Scoop. This package is generally up to date.
+
+`scoop install helm`
+
+#### From Apt (Debian/Ubuntu)
+Members of the Helm community have contributed a Helm package for Apt. This package is generally up to date.
+
+```
+curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+sudo apt-get install apt-transport-https --yes
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update
+sudo apt-get install helm
+```
+
+#### From dnf/yum (fedora)
+Since Fedora 35, helm is available on the official repository. You can install helm with invoking:
+
+`sudo dnf install helm`
+
+#### From Snap
+The Snapcrafters community maintains the Snap version of the Helm package:
+
+`sudo snap install helm --classic`
+
+#### From pkg (FreeBSD)
+Members of the FreeBSD community have contributed a Helm package build to the FreeBSD Ports Collection. This package is generally up to date.
+
+`pkg install helm`
 
