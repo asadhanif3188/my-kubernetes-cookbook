@@ -11,6 +11,7 @@ This cookbook is maintained to keep track of my k8s concepts learning.
 - [Volumes](#volumes)
 - [Role-based access control (RBAC)](#role-based-access-control-rbac)
 - [RBAC - Lab Tasks](#rbac-lab-tasks)
+- [Helm Chart](#helm-chart)
 
 -------
 
@@ -1052,3 +1053,20 @@ With this configuration, the user `John` will be able to `create` and `delete` P
 #### Answer:
 
 --------
+## Helm Chart
+
+> Helm is the best way to find, share, and use software built for Kubernetes.
+
+### The Purpose of Helm
+Helm is a tool for managing Kubernetes packages called **_charts_**. Helm can do the following:
+- Create new charts from scratch
+- Package charts into chart archive (tgz) files
+- Interact with chart repositories where charts are stored
+- Install and uninstall charts into an existing Kubernetes cluster
+- Manage the release cycle of charts that have been installed with Helm
+
+For Helm, there are three important concepts:
+- The **_chart_** is a bundle of information necessary to create an instance of a Kubernetes application.
+- The **_config_** contains configuration information that can be merged into a packaged chart to create a releasable object.
+- A **_release_** is a running instance of a *chart*, combined with a specific *config*.
+
