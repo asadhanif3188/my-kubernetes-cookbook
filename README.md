@@ -1392,8 +1392,107 @@ To access your WordPress site from outside the cluster follow the steps below:
 The above shows the current state of your release.
 
 
+#### `helm upgrade` and `helm rollback`: Upgrading a Release, and Recovering on Failure
+When a new version of a chart is released, or when you want to change the configuration of your release, you can use the `helm upgrade` command.
 
+An upgrade takes an existing release and upgrades it according to the information you provide. Because Kubernetes charts can be large and complex, Helm tries to perform the least invasive upgrade. It will only update things that have changed since the last release.
 
+`helm upgrade -f panda.yaml happy-panda bitnami/wordpress`
+
+In the above case, the `happy-panda` release is upgraded with the same chart, but with a new YAML file:
+
+`mariadb.auth.username: user1`
+
+We can use helm get values to see whether that new setting took effect.
+
+`helm get values happy-panda`
+```
+mariadb:
+  auth:
+    username: user1
+```
+
+The `helm get` command is a useful tool for looking at a release in the cluster. And as we can see above, it shows that our new values from panda.yaml were deployed to the cluster.
+
+Now, if something does not go as planned during a release, it is easy to roll back to a previous release using `helm rollback [RELEASE] [REVISION]`.
+
+`helm rollback happy-panda 1`
+
+The above rolls back our happy-panda to its very first release version. A release version is an incremental revision. Every time an install, upgrade, or rollback happens, the revision number is incremented by 1. The first revision number is always 1. And we can use `helm history [RELEASE]` to see revision numbers for a certain release.
+
+#### `helm uninstall`: Uninstalling a Release
+When it is time to uninstall a release from the cluster, use the `helm uninstall` command:
+
+`helm uninstall happy-panda`
+
+This will remove the release from the cluster. You can see all of your currently deployed releases with the `helm list` command:
+
+`helm list`
+```
+NAME            VERSION UPDATED                         STATUS          CHART
+inky-cat        1       Wed Sep 28 12:59:46 2016        DEPLOYED        alpine-0.1.0
+```
+
+From the output above, we can see that the `happy-panda` release was uninstalled.
+
+In previous versions of Helm, when a release was deleted, a record of its deletion would remain. In Helm 3, deletion removes the release record as well. If you wish to keep a deletion release record, use `helm uninstall --keep-history`. Using `helm list --uninstalled` will only show releases that were uninstalled with the `--keep-history` flag.
+
+The `helm list --all` flag will show you all release records that Helm has retained, including records for failed or deleted items (if `--keep-history` was specified):
+
+`helm list --all`
+```
+NAME            VERSION UPDATED                         STATUS          CHART
+happy-panda     2       Wed Sep 28 12:47:54 2016        UNINSTALLED     wordpress-10.4.5.6.0
+inky-cat        1       Wed Sep 28 12:59:46 2016        DEPLOYED        alpine-0.1.0
+kindred-angelf  2       Tue Sep 27 16:16:10 2016        UNINSTALLED     alpine-0.1.0
+```
+
+Note that because releases are now deleted by default, it is no longer possible to rollback an uninstalled resource.
+
+#### `helm repo`: Working with Repositories
+Helm 3 no longer ships with a default chart repository. The `helm repo` command group provides commands to add, list, and remove repositories.
+
+You can see which repositories are configured using `helm repo list`:
+
+`helm repo list`
+```
+NAME            URL
+stable          https://charts.helm.sh/stable
+mumoshu         https://mumoshu.github.io/charts
+```
+
+And new repositories can be added with `helm repo add`:
+
+`helm repo add dev https://example.com/dev-charts`
+
+Because chart repositories change frequently, at any point you can make sure your Helm client is up to date by running `helm repo update`.
+
+Repositories can be removed with helm repo remove.
+
+#### Creating Your Own Charts
+The Chart Development Guide explains how to develop your own charts. But you can get started quickly by using the `helm create` command:
+
+`helm create deis-workflow`
+```
+Creating deis-workflow
+```
+
+Now there is a chart in `./deis-workflow`. You can edit it and create your own templates.
+
+As you edit your chart, you can validate that it is well-formed by running `helm lint`.
+
+When it's time to package the chart up for distribution, you can run the `helm package` command:
+
+`helm package deis-workflow`
+```
+deis-workflow-0.1.0.tgz
+```
+
+And that chart can now easily be installed by `helm install`:
+
+`helm install deis-workflow ./deis-workflow-0.1.0.tgz`
+
+Charts that are packaged can be loaded into chart repositories. See the documentation for Helm chart repositories for more details.
 
 
 ---------
