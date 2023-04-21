@@ -427,6 +427,7 @@ spec:
     requests:
       storage: 5Gi
 ```
+-----------
 
 ## Role-based access control (RBAC)
 Role-based access control (RBAC) is a method of regulating/controlling access to computer or network resources based on the roles of individual users within the organization.
@@ -668,6 +669,37 @@ There can be Resource Access Management for **Sub-Resources** like:
 - Aggregated Roles can simplify RBAC management by allowing you to create a single Role that spans multiple API groups.
 - They are defined in the aggregation Rule field of a Cluster Role.
 - Aggregated Roles are useful for implementing custom controllers or operators that need access to resources across different API groups.
+
+--------
+## Authentication and Authorization in Kubernetes - Series
+In this series, you will learn how users and apps are **authenticated** and **authorized** in a Kubernetes cluster.
+
+This series originally published by [learnk8s](https://learnk8s.io/auth-authz). 
+
+> Note: In case someone wants that this series need to be unpublished, just let me know at `asadhanif3188@gmai.com`, before reporting it, I'll do it.   
+
+When you execute the kubectl apply, the request is submitted to the cluster.
+
+**The API server is the first component in the control plane to receive that request.**
+
+The API server parses the requests and stores the object in etcd.
+
+At least, this is the big picture.
+
+Things turn out to be a bit more complicated than that, though.
+
+**The API is organized in a collection of components invoked one after the other.**
+
+<img src="./k8s-series/1-api-server.svg" width="70%" />
+
+#### ARTICLES IN THIS SERIES
+1. User and workload identities in Kubernetes
+2. Limiting access to Kubernetes resources with RBAC
+3. Implementing a custom Kubernetes authentication method
+4. Authentication between microservices using Kubernetes identities
+
+### User and Workload Identities in Kubernetes
+
 
 --------
 ## RBAC - Lab Tasks 
