@@ -1168,3 +1168,57 @@ bitnami/aspnet-core              	1.2.3        	3.1.9        	ASP.NET Core is an
 # ... and many more
 ```
 
+### Using Helm
+
+#### `helm search`: Finding Charts
+Helm comes with a powerful `search` command. It can be used to search two different types of source:
+
+1. `helm search hub` searches the Artifact Hub, which lists helm charts from dozens of different repositories.
+2. `helm search repo` searches the repositories that you have added to your local helm client (with `helm repo add`). This search is done over local data, and no public network connection is needed.
+
+You can find publicly available charts by running `helm search hub`:
+
+`helm search hub wordpress`
+
+Output
+```
+URL                                                 CHART VERSION APP VERSION DESCRIPTION
+https://hub.helm.sh/charts/bitnami/wordpress        7.6.7         5.2.4       Web publishing platform for building blogs and ...
+https://hub.helm.sh/charts/presslabs/wordpress-...  v0.6.3        v0.6.3      Presslabs WordPress Operator Helm Chart
+https://hub.helm.sh/charts/presslabs/wordpress-...  v0.7.1        v0.7.1      A Helm chart for deploying a WordPress site on ...
+```
+The above searches for all wordpress charts on Artifact Hub.
+
+With no filter, `helm search hub` shows you all of the available charts.
+
+Using helm search repo, you can find the names of the charts in repositories you have already added:
+
+`helm repo add brigade https://brigadecore.github.io/charts`
+```
+"brigade" has been added to your repositories
+```
+
+`helm search repo brigade`
+
+Output
+```
+NAME                          CHART VERSION APP VERSION DESCRIPTION
+brigade/brigade               1.3.2         v1.2.1      Brigade provides event-driven scripting of Kube...
+brigade/brigade-github-app    0.4.1         v0.2.1      The Brigade GitHub App, an advanced gateway for...
+brigade/brigade-github-oauth  0.2.0         v0.20.0     The legacy OAuth GitHub Gateway for Brigade
+brigade/brigade-k8s-gateway   0.1.0                     A Helm chart for Kubernetes
+brigade/brigade-project       1.0.0         v1.0.0      Create a Brigade project
+brigade/kashti                0.4.0         v0.4.0      A Helm chart for Kubernetes
+```
+
+Helm search uses a fuzzy string matching algorithm, so you can type parts of words or phrases:
+
+`helm search repo kash`
+```
+NAME            CHART VERSION APP VERSION DESCRIPTION
+brigade/kashti  0.4.0         v0.4.0      A Helm chart for Kubernetes
+```
+
+Search is a good way to find available packages. Once you have found a package you want to install, you can use helm install to install it.
+
+
