@@ -12,6 +12,7 @@ This cookbook is maintained to keep track of my k8s concepts learning.
 - [Role-based access control (RBAC)](#role-based-access-control-rbac)
 - [RBAC - Lab Tasks](#rbac-lab-tasks)
 - [Helm Chart](#helm-chart)
+- [Creating Kubernetes clusters with Terraform](#creating-kubernetes-clusters-with-terraform)
 
 -------
 
@@ -698,7 +699,28 @@ Things turn out to be a bit more complicated than that, though.
 3. Implementing a custom Kubernetes authentication method
 4. Authentication between microservices using Kubernetes identities
 
-### User and Workload Identities in Kubernetes
+### 1. User and Workload Identities in Kubernetes
+> In [this article](https://learnk8s.io/authentication-kubernetes), you will explore how users and workloads are authenticated with the Kubernetes API server.
+
+The Kubernetes API server exposes an HTTP API that lets end-users, different parts of your cluster, and external components communicate with one another.
+
+Most operations can be performed through kubectl, but you can also access the API directly using REST calls.
+
+But how is the access to the API restricted only to authorized users?
+
+
+
+### 2. Limiting access to Kubernetes resources with RBAC
+> In [this article](https://learnk8s.io/rbac-kubernetes), you will learn how to recreate the Kubernetes RBAC authorization model from scratch and practice the relationships between Roles, ClusterRoles, ServiceAccounts, RoleBindings and ClusterRoleBindings.
+
+
+
+### 3. Implementing a custom Kubernetes authentication method
+> In [this article](https://learnk8s.io/kubernetes-custom-authentication), 
+
+
+### 4. Authentication between microservices using Kubernetes identities
+> In [this article](https://learnk8s.io/microservices-authentication-kubernetes), 
 
 
 --------
@@ -1368,4 +1390,16 @@ To access your WordPress site from outside the cluster follow the steps below:
 ```
 
 The above shows the current state of your release.
+
+
+
+
+
+
+---------
+
+## Creating Kubernetes clusters with Terraform
+In [this series](https://learnk8s.io/kubernetes-terraform), you will get started with infrastructure as code (IaC) with Terraform.
+
+By the end of each article, you will build strong confidence in provisioning Kubernetes clusters through tutorials and code examples.
 
