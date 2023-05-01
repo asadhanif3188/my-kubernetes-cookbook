@@ -1108,6 +1108,9 @@ With this configuration, the user `John` will be able to `create` and `delete` P
 
 --------
 ## Helm Chart
+Helm works as a package manager with install or uninstall wizard, and also as a release manager helping us upgrade all rollback applications. 
+
+The most important thing is that it lets us treat our Kubernetes apps as apps instead of just collection of objects. We don't have to micromanage each K8s object anymore. 
 
 > Helm is the best way to find, share, and use software built for Kubernetes.
 
