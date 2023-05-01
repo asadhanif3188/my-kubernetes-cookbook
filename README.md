@@ -1225,6 +1225,15 @@ bitnami/aspnet-core              	1.2.3        	3.1.9        	ASP.NET Core is an
 # ... and many more
 ```
 
+#### Install Helm Easily 
+You can run the following commands to install the Helm package.
+
+```
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+```
+
 ### Using Helm
 
 #### `helm search`: Finding Charts
@@ -1468,11 +1477,148 @@ And new repositories can be added with `helm repo add`:
 
 `helm repo add dev https://example.com/dev-charts`
 
+
 Because chart repositories change frequently, at any point you can make sure your Helm client is up to date by running `helm repo update`.
 
 Repositories can be removed with helm repo remove.
 
-#### Creating Your Own Charts
+### Creating Your Own Chart
+To create our won heml chart we use `helm create` command as following:
+
+`helm create nginx-chart`
+
+This command creates a skeleton structure of a Helm chart. We just have to modify these files or add relevant files to the templates or charts directory. 
+
+<img src="./screenshots/nginx-chart-directory-structure.png" width="60%" />
+
+Within this skeleton structure there is a file `Chart.yaml` with following contents:
+
+```
+apiVersion: v2
+name: nginx-chart
+description: A Helm chart for Kubernetes
+
+# A chart can be either an 'application' or a 'library' chart.
+#
+# Application charts are a collection of templates that can be packaged into versioned archives
+# to be deployed.
+#
+# Library charts provide useful utilities or functions for the chart developer. They're included as
+# a dependency of application charts to inject those utilities and functions into the rendering
+# pipeline. Library charts do not define any templates and therefore cannot be deployed.
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: "1.16.0"
+
+maintainers:
+  - name: Asad Hanif
+    email: asadhanif3188@gmail.com 
+```
+
+Now let look at **templates** directory within the neginx-chart. It already has some files that are samples. These samples are automatically created by helm. 
+
+<img src="./screenshots/nginx-chart-templates-directory.png" width="60%" />
+
+We can remove all files and folders from this **templates** directory. Add a *service* file and a *deployment* file.  
+
+**deployment.yaml**
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-nginx
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: hello-world
+  template:
+    metadata:
+      labels:
+        app: hello-world
+    spec:
+      containers:
+        - name: hello-world
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+```
+
+**service.yaml**
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-service
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: hello-world
+```
+**values.yaml**
+```
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 2
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: "1.16.0"
+
+service:
+  type: ClusterIP
+  port: 80
+```
+
+Following objects can be used to templating to refer in the Custom Resource Definition (CRD), i.e. service, deployment, etc. 
+- Release.Name
+- Release.Namespace
+- Release.IsInstall
+- Release.Revision
+- Release.Service
+- Chart.Name
+- Chart.ApiVersion
+- Chart.Type
+- Chart.Keywords
+- Chart.Home
+- Capabilities.KubeVersion
+- Capabilities.ApiVersions
+- Capabilities.HelmVersion
+- Capabilities.GitCommit
+- Capabilities.GitTreeState
+- Capabilities.GoVersion
+- Values.replicaCount
+- Values.image
+
+
+**Making sure Chart is working as intended**
+There are three ways to verify the Helm charts before installing them. 
+1. **Lint**: Linting helps us verify that the chart and the YAML format is correct. 
+2. **Template**: Verifying the template helps us make sure that the templating part is working as expected. 
+3. **Dry Run**: This helps us make sure that the chart works well with Kubernetes itself. 
+
+
+
+
+<!-- #### Creating Your Own Charts
 The Chart Development Guide explains how to develop your own charts. But you can get started quickly by using the `helm create` command:
 
 `helm create deis-workflow`
@@ -1495,7 +1641,7 @@ And that chart can now easily be installed by `helm install`:
 
 `helm install deis-workflow ./deis-workflow-0.1.0.tgz`
 
-Charts that are packaged can be loaded into chart repositories. See the documentation for Helm chart repositories for more details.
+Charts that are packaged can be loaded into chart repositories. See the documentation for Helm chart repositories for more details. -->
 
 
 ---------
