@@ -127,6 +127,42 @@ spec:
         name: nginx
 ```
 
+### Part C
+
+Create a Kubernetes Deployment named *web-app* using the *nginx* image with *three replicas*. Ensure the deployment has labels like *app: web* and *tier: frontend*.
+#### Solution:
+
+Generate a sample deployment file using followng command and update labels in the file: 
+
+```
+kubectl create deployment web-app --image=nginx:latest --replicas=3 --dry-run=client -o yaml > web-app-deployment.yaml
+```
+Final deployment file: 
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web
+    tier: frontend
+  name: web-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: web
+        tier: frontend
+    spec:
+      containers:
+      - image: nginx:latest
+        name: nginx
+```
 
 
 -------------------------
