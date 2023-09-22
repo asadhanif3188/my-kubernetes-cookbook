@@ -1778,9 +1778,9 @@ You can choose one or more defined annotation values:
 
 | Annotation Value	| Description |
 |------|-------|
-| before-hook-creation	| Delete the previous resource before a new hook is launched (default) |
-| hook-succeeded	| Delete the resource after the hook is successfully executed |
-| hook-failed	| Delete the resource if the hook failed during execution |
+| `before-hook-creation`	| Delete the previous resource before a new hook is launched (default) |
+| `hook-succeeded`	| Delete the resource after the hook is successfully executed |
+| `hook-failed`	| Delete the resource if the hook failed during execution |
 
 If no hook deletion policy annotation is specified, the before-hook-creation behavior applies by default.
 
